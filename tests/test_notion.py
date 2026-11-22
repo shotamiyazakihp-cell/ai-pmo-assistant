@@ -134,8 +134,27 @@ def test_token_required():
         NotionReader("")
 
 
-def _ingest(conn, fake, force=False):
-    return ingest_notion(conn, make_reader(fake), DB, "関連プロジェクト", "録音日時", force=force)
+def _ingest(conn, fake, force=False, data_kind="test"):
+    return ingest_notion(conn, make_reader(fake), DB, "関連プロジェクト", "録音日時", force=force, data_kind=data_kind)
+
+
+def test_real_notion_blocked_until_enabled(conn):
+    from pmo import settings_store
+    from pmo.extract import build_prompt, latest_version_id
+    fake = FakeNotion([page(P1, "定例1", "t1")], {P1: [block("paragraph", "本物の本文")]})
+    with pytest.raises(settings_store.RealDataDisabled):
+        _ingest(conn, fake, data_kind="real")
+    assert fake.calls == [] and conn.execute("SELECT COUNT(*) FROM runs").fetchone()[0] == 0
+    with pytest.raises(ValueError):
+        settings_store.change(conn, "real_data_enabled", "1", "")      # 理由なしは不可
+    settings_store.change(conn, "real_data_enabled", "1", "規程を確認した（テスト）")
+    assert _ingest(conn, fake, data_kind="real")["new"] == 1
+    vid = latest_version_id(conn, P1)
+    assert "本物の本文" in build_prompt(conn, vid)
+    settings_store.change(conn, "real_data_enabled", "0", "止める（テスト）")
+    with pytest.raises(settings_store.RealDataDisabled):
+        build_prompt(conn, vid)                                          # 止めたら Claude にも渡さない
+    assert conn.execute("SELECT COUNT(*) FROM rule_changes").fetchone()[0] == 2
 
 
 def test_ingest_notion_diff_and_duplicates(conn):

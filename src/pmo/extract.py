@@ -13,7 +13,7 @@ import re
 import sqlite3
 from dataclasses import dataclass, field
 
-from . import db
+from . import db, settings_store
 from .claude_runner import Runner, RunnerError
 from .compare import find_match
 from .config import UNKNOWN
@@ -76,6 +76,8 @@ SOURCE_ID: {source_id}
 
 def build_prompt(conn: sqlite3.Connection, version_id: int) -> str:
     v = _version(conn, version_id)
+    if v["data_kind"] == "real":
+        settings_store.require_real_data(conn, "本物の議事録を Claude に渡すこと")
     rows = conn.execute(
         "SELECT item_id, item_type, content, owner, due, status FROM items WHERE project=? ORDER BY item_id",
         (v["project"],),
@@ -91,7 +93,7 @@ def build_prompt(conn: sqlite3.Connection, version_id: int) -> str:
 
 def _version(conn: sqlite3.Connection, version_id: int) -> sqlite3.Row:
     v = conn.execute(
-        """SELECT v.*, s.project, s.title, s.meeting_date, s.url FROM source_versions v
+        """SELECT v.*, s.project, s.title, s.meeting_date, s.url, s.data_kind FROM source_versions v
            JOIN sources s ON s.source_id = v.source_id WHERE v.version_id=?""",
         (version_id,),
     ).fetchone()
@@ -254,7 +256,7 @@ def analyze(conn: sqlite3.Connection, version_id: int, runner: Runner) -> dict:
         detail.update(counts)
         db.finish_run(conn, run_id, "success", detail)
         return {"run_id": run_id, "status": "success", **detail}
-    except (RunnerError, OutputFormatError, ValueError) as e:
+    except (RunnerError, OutputFormatError, ValueError, settings_store.RealDataDisabled) as e:
         detail["error_type"] = type(e).__name__
         db.finish_run(conn, run_id, "failed", detail, str(e))
         return {"run_id": run_id, "status": "failed", "error": str(e), **detail}

@@ -33,6 +33,9 @@ class Settings:
     notion_database_id: str | None
     notion_project_property: str
     notion_date_property: str
+    notion_database_kind: str   # test（試験用のデータベース）/ real（本物）。書かなければ real 扱い
+    knowledge_dir: Path | None  # ドライブの PMO ナレッジを PC に書き出したフォルダ（実データ）
+    note_export_path: Path | None  # note の公式の書き出し（XML）（実データ）
 
 
 def get_settings() -> Settings:
@@ -45,6 +48,9 @@ def get_settings() -> Settings:
         notion_database_id=os.environ.get("NOTION_DATABASE_ID") or None,
         notion_project_property=os.environ.get("NOTION_PROJECT_PROPERTY", "関連プロジェクト"),
         notion_date_property=os.environ.get("NOTION_DATE_PROPERTY", "録音日時"),
+        notion_database_kind="test" if os.environ.get("NOTION_DATABASE_KIND", "").strip() == "test" else "real",
+        knowledge_dir=Path(os.environ["KNOWLEDGE_DIR"]) if os.environ.get("KNOWLEDGE_DIR") else None,
+        note_export_path=Path(os.environ["NOTE_EXPORT_PATH"]) if os.environ.get("NOTE_EXPORT_PATH") else None,
     )
 
 

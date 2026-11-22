@@ -109,6 +109,75 @@ CREATE TABLE IF NOT EXISTS runs (
     detail      TEXT NOT NULL DEFAULT '{}',
     error       TEXT
 );
+-- ===== Phase 2：ナレッジ =====
+CREATE TABLE IF NOT EXISTS knowledge_docs (
+    doc_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    origin       TEXT NOT NULL,      -- sample / folder / note_export
+    location     TEXT NOT NULL UNIQUE, -- 出典（パスや URL）
+    title        TEXT NOT NULL,
+    kind         TEXT NOT NULL,      -- kb（資料作成知識）/ note（個人の経験・考え）/ deliverable（過去の成果物）
+    info_class   TEXT NOT NULL,      -- general_knowhow / personal_opinion / project_rule / fact
+    project      TEXT,               -- プロジェクト固有なら名前（全体に当てはめない）
+    data_kind    TEXT NOT NULL DEFAULT 'test', -- test / real
+    updated_at   TEXT,
+    content_hash TEXT NOT NULL,
+    imported_at  TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS knowledge_chunks (
+    chunk_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    doc_id   INTEGER NOT NULL REFERENCES knowledge_docs(doc_id),
+    heading  TEXT,
+    text     TEXT NOT NULL
+);
+
+-- ===== Phase 3：AI の分析・資料の下書き =====
+CREATE TABLE IF NOT EXISTS findings (
+    finding_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+    run_id        INTEGER REFERENCES runs(run_id),
+    project       TEXT NOT NULL,
+    finding_type  TEXT NOT NULL,  -- recurring / stalled / inconsistency / risk / next_action / question
+    text          TEXT NOT NULL,
+    evidence      TEXT NOT NULL DEFAULT '[]', -- 根拠の項目番号（JSON）
+    classification TEXT NOT NULL, -- ai_inference / ai_proposal
+    status        TEXT NOT NULL DEFAULT 'pending', -- pending / accepted / dismissed
+    feedback      TEXT,
+    created_at    TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS documents (
+    document_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    run_id      INTEGER REFERENCES runs(run_id),
+    doc_type    TEXT NOT NULL,
+    project     TEXT NOT NULL,
+    title       TEXT NOT NULL,
+    audience    TEXT,
+    body        TEXT NOT NULL,
+    refs        TEXT NOT NULL DEFAULT '{}', -- 使った項目と知識（JSON）
+    warnings    TEXT NOT NULL DEFAULT '[]',
+    status      TEXT NOT NULL DEFAULT 'draft', -- draft / approved / rejected
+    edited_body TEXT,                         -- 人が直した版（改善の材料）
+    created_at  TEXT NOT NULL
+);
+
+-- ===== Phase 5：改善 =====
+CREATE TABLE IF NOT EXISTS missed_items (
+    miss_id     INTEGER PRIMARY KEY AUTOINCREMENT,
+    source_id   TEXT NOT NULL REFERENCES sources(source_id),
+    description TEXT NOT NULL,
+    created_at  TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS settings (
+    key   TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS rule_changes (
+    change_id  INTEGER PRIMARY KEY AUTOINCREMENT,
+    key        TEXT NOT NULL,
+    old_value  TEXT,
+    new_value  TEXT NOT NULL,
+    reason     TEXT NOT NULL,
+    evaluation TEXT,
+    created_at TEXT NOT NULL
+);
 """
 
 
@@ -123,7 +192,25 @@ def connect(path: Path | str, check_same_thread: bool = True) -> sqlite3.Connect
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     conn.executescript(SCHEMA)
+    _migrate(conn)
     return conn
+
+
+def _migrate(conn: sqlite3.Connection) -> None:
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(sources)")}
+    if "data_kind" not in cols:
+        # test：試験用 / real：実データ（設定で許可するまで Claude に渡さない）
+        conn.execute("ALTER TABLE sources ADD COLUMN data_kind TEXT NOT NULL DEFAULT 'test'")
+    try:
+        conn.execute("CREATE VIRTUAL TABLE IF NOT EXISTS knowledge_fts USING fts5("
+                     "text, heading, chunk_id UNINDEXED, tokenize='trigram')")
+    except sqlite3.OperationalError:
+        pass  # FTS5 が無い SQLite では LIKE で探す
+    conn.commit()
+
+
+def fts_available(conn: sqlite3.Connection) -> bool:
+    return conn.execute("SELECT 1 FROM sqlite_master WHERE name='knowledge_fts'").fetchone() is not None
 
 
 def start_run(conn: sqlite3.Connection, kind: str) -> int:

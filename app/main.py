@@ -18,6 +18,9 @@ from pmo.ingest import ingest_files, ingest_notion  # noqa: E402
 from pmo.notion_reader import NotionReader  # noqa: E402
 from pmo.review import NEW_ITEM, ReviewError, adopt, reject  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import extra_pages as xp  # noqa: E402
+
 st.set_page_config(page_title="AI PMO Assistant", page_icon="🧭", layout="wide")
 settings = get_settings()
 
@@ -43,20 +46,29 @@ def link(url: str) -> str:
 with st.sidebar:
     st.title("🧭 AI PMO Assistant")
     st.caption("Phase 1：取り込む → 抽き出す → 確かめて採用する")
-    page = st.radio("画面", ["議事録", "抽出の確認", "処理の履歴"], label_visibility="collapsed")
+    page = st.radio("画面", ["ダッシュボード", "プロジェクト一覧", "議事録", "抽出の確認（承認）", "課題・リスク管理",
+                             "TODO 管理", "AI 分析結果", "資料作成", "ナレッジ検索", "処理の履歴・設定"],
+                    label_visibility="collapsed")
+    if not xp.settings_store.real_data_enabled(conn):
+        st.info("実データは止めています（試験用データのみ）。")
     if api_key_present():
         st.error("ANTHROPIC_API_KEY が設定されています。API 課金を防ぐため、Claude Code の呼び出しは止めます。")
     st.divider()
     st.subheader("取り込み")
-    if st.button("試験用の議事録10件を取り込む", use_container_width=True):
+    if st.button("試験用の議事録10件を取り込む", width="stretch"):
         res = ingest_files(conn, list((ROOT / "samples" / "meetings").glob("*.md")))
         st.toast(f"{RUN_JA[res['status']]}：新規 {res['new']}・変更 {res['new_version']}・変化なし {res['unchanged']}")
     notion_ready = bool(settings.notion_token and settings.notion_database_id)
-    if st.button("Notion から取り込む（読み取りのみ）", use_container_width=True, disabled=not notion_ready,
+    if st.button("Notion から取り込む（読み取りのみ）", width="stretch", disabled=not notion_ready,
                  help=None if notion_ready else ".env に NOTION_TOKEN と NOTION_DATABASE_ID を設定すると使えます"):
-        with st.spinner("Notion を読んでいます…"):
-            res = ingest_notion(conn, NotionReader(settings.notion_token), settings.notion_database_id,
-                                settings.notion_project_property, settings.notion_date_property)
+        try:
+            with st.spinner("Notion を読んでいます…"):
+                res = ingest_notion(conn, NotionReader(settings.notion_token), settings.notion_database_id,
+                                    settings.notion_project_property, settings.notion_date_property,
+                                    data_kind=settings.notion_database_kind)
+        except xp.settings_store.RealDataDisabled as e:
+            st.error(str(e))
+            st.stop()
         msg = (f"{RUN_JA[res['status']]}：一覧 {res['listed']}・新規 {res['new']}・変更 {res['new_version']}・"
                f"更新なし {res['skipped_not_edited']}・取得できないブロック {res['unretrieved_blocks']}")
         (st.success if res["status"] == "success" else st.error)(msg)
@@ -80,7 +92,7 @@ def page_sources():
     projects = ["すべて"] + sorted(df["プロジェクト"].unique())
     pj = st.selectbox("プロジェクト", projects)
     view = df if pj == "すべて" else df[df["プロジェクト"] == pj]
-    st.dataframe(view.drop(columns=["source_id"]), hide_index=True, use_container_width=True)
+    st.dataframe(view.drop(columns=["source_id"]), hide_index=True, width="stretch")
 
     labels = {r.source_id: f"{r.会議日 or '日付不明'}｜{r.タイトル}" for r in view.itertuples()}
     sid = st.selectbox("詳細を見る議事録", list(labels), format_func=labels.get)
@@ -103,7 +115,7 @@ def page_sources():
     with c2:
         st.subheader("抽き出し")
         b1, b2 = st.columns(2)
-        if b1.button("Claude Code で分析", type="primary", use_container_width=True, disabled=api_key_present()):
+        if b1.button("Claude Code で分析", type="primary", width="stretch", disabled=api_key_present()):
             with st.spinner("Claude Code で分析しています（数分かかることがあります）…"):
                 res = analyze(conn, vid, ClaudeCliRunner())
             if res["status"] == "success":
@@ -176,14 +188,14 @@ def page_review():
             c1, c2, c3 = st.columns([3, 1, 1])
             choice = c1.selectbox("結び付け", options, format_func=names.get, key=f"lk{e['extraction_id']}",
                                   label_visibility="collapsed")
-            if c2.button("採用", key=f"ad{e['extraction_id']}", type="primary", use_container_width=True):
+            if c2.button("採用", key=f"ad{e['extraction_id']}", type="primary", width="stretch"):
                 try:
                     item_id = adopt(conn, e["extraction_id"], None if choice == "auto" else choice)
                     st.toast(f"項目 #{item_id} に採用しました")
                     st.rerun()
                 except ReviewError as err:
                     st.error(str(err))
-            if c3.button("却下", key=f"rj{e['extraction_id']}", use_container_width=True):
+            if c3.button("却下", key=f"rj{e['extraction_id']}", width="stretch"):
                 reject(conn, e["extraction_id"])
                 st.rerun()
     with tab2:
@@ -193,24 +205,29 @@ def page_review():
                       s.title AS 最後に出た議事録, s.url AS 出典
                FROM items i JOIN sources s ON s.source_id=i.last_source_id ORDER BY i.project, i.item_type""", conn)
         df["種類"] = df["種類"].map(ITEM_TYPES)
-        st.dataframe(df, hide_index=True, use_container_width=True)
+        st.dataframe(df, hide_index=True, width="stretch")
         if not df.empty:
             iid = st.selectbox("変化の履歴を見る項目", df["番号"], format_func=lambda x: f"#{x}")
             ev = pd.read_sql_query(
                 """SELECT ev.created_at AS 記録日時, ev.event_type AS 変化, ev.old_value AS 前, ev.new_value AS 後,
                           s.title AS 議事録 FROM item_events ev JOIN sources s ON s.source_id=ev.source_id
                    WHERE ev.item_id=? ORDER BY s.meeting_date, ev.event_id""", conn, params=(int(iid),))
-            st.dataframe(ev, hide_index=True, use_container_width=True)
+            st.dataframe(ev, hide_index=True, width="stretch")
 
 
 # ---------------- 画面3：処理の履歴 ----------------
 def page_runs():
-    st.header("処理の履歴")
+    st.header("処理の履歴・設定")
     df = pd.read_sql_query(
         "SELECT run_id AS 番号, kind AS 処理, started_at AS 開始, finished_at AS 終了, status AS 結果, "
         "detail AS 内容, error AS エラー FROM runs ORDER BY run_id DESC LIMIT 500", conn)
     df["結果"] = df["結果"].map(RUN_JA)
-    st.dataframe(df, hide_index=True, use_container_width=True)
+    st.dataframe(df, hide_index=True, width="stretch")
+    xp.page_quality_settings(conn)
 
 
-{"議事録": page_sources, "抽出の確認": page_review, "処理の履歴": page_runs}[page]()
+{"ダッシュボード": lambda: xp.page_dashboard(conn), "プロジェクト一覧": lambda: xp.page_projects(conn),
+ "議事録": page_sources, "抽出の確認（承認）": page_review, "課題・リスク管理": lambda: xp.page_issues(conn),
+ "TODO 管理": lambda: xp.page_todos(conn), "AI 分析結果": lambda: xp.page_analysis(conn),
+ "資料作成": lambda: xp.page_documents(conn), "ナレッジ検索": lambda: xp.page_knowledge(conn),
+ "処理の履歴・設定": page_runs}[page]()

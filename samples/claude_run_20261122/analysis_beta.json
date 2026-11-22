@@ -1,0 +1,9 @@
+{"findings": [
+  {"finding_type": "inconsistency", "text": "[#17]（本稼働の時期を経理部長に確認する）は「未着手（期限超過）」のままだが、2026-10-28 の会議で本稼働は1月とする決定 [#24] が出ている。確認はすでに済んでいる可能性があり、[#17] の状態が更新されていないおそれがある。期限超過の TODO 1 件はこの項目と見られる。", "evidence_item_ids": [17, 24], "classification": "ai_inference"},
+  {"finding_type": "next_action", "text": "[#17] の確認結果を伊藤さんに確かめ、完了なら状態を更新する。あわせて、本稼働時期の認識のずれ [#16] が [#24] の決定で解消したかを確認し、[#16] を閉じるかどうかを決める。", "evidence_item_ids": [16, 17, 24], "classification": "ai_proposal"},
+  {"finding_type": "inconsistency", "text": "経理部は月末の締め処理に間に合う導入を依頼し [#8]、本稼働を12月と考えていた [#16]。本稼働が1月に決まった [#24] ことで、経理部の依頼が満たされるかどうかが議事録からは分からない。[#8] は 2026-10-07 以降の会議に出ておらず、担当・状態も不明のままである。", "evidence_item_ids": [8, 16, 24], "classification": "ai_inference"},
+  {"finding_type": "stalled", "text": "交通費の精算をラクケイで扱うかどうか [#9] は、キックオフ（2026-10-07）から 2026-10-28 の会議まで未決のままで、担当・期限も無い。1月の本稼働 [#24] に向けて範囲が決まらないと、設定や利用者への説明に影響するおそれがある。", "evidence_item_ids": [9, 24], "classification": "ai_inference"},
+  {"finding_type": "next_action", "text": "[#9]（交通費の精算の扱い）について、決める担当者と決定の期限を次回の定例で決める。", "evidence_item_ids": [9], "classification": "ai_proposal"},
+  {"finding_type": "risk", "text": "1月の本稼働は繁忙期に近く利用者への説明が不十分になるリスク [#25] に、担当・対策が無い。本稼働 1月 [#24] が決まった以上、利用者説明の計画を早めに立てる必要がある。", "evidence_item_ids": [24, 25], "classification": "ai_proposal"},
+  {"finding_type": "question", "text": "経理部の依頼 [#8] を TODO として誰が持つのか、また本稼働 1月 [#24] の決定を経理部が了承しているのかを確認する必要がある。担当不明の TODO 1 件はこの項目と見られる。", "evidence_item_ids": [8, 24], "classification": "ai_inference"}
+]}

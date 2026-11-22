@@ -1,89 +1,66 @@
-# AI PMO Assistant（Phase 1 MVP）
+# AI PMO Assistant
 
-Notion の議事録を読み取り専用で取り込み、Claude Code（Claude Pro の枠）で決定・TODO・課題・リスクを抽き出し、
-人が確かめて採用したものだけを確定データにする、個人用のツールです。Windows 11 の PC の中だけで動きます。
+議事録（Notion）を読み取り専用で取り込み、Claude Code（Claude Pro の枠）で決定・TODO・課題・リスクを抽き出し、
+人が確かめて採用したものを確定データにして、日々の業務整理・資料の下書き・横断分析・改善までを支援する個人用ツール。
+Windows 11 の PC の中だけで動く。追加費用 0 円（Claude API・従量課金・有料サービスは使わない）。
 
-- 追加費用 0 円（Claude API・従量課金・有料サービスは使わない）
-- Notion へは書き込まない（読み取りの呼び出し以外は送る前に止める）
-- 担当・期限は原文の引用に書かれている時だけ入れる。無ければ「不明」
-- 失敗は失敗として処理の履歴に残す
+## いちばん簡単な始め方（PC）
 
-## PC での準備（PowerShell）
+1. GitHub の画面でこのリポジトリの `scripts/pc_setup_and_check.bat` を開き、右上の「Download raw file」（下向き矢印）で保存する
+2. 保存した `pc_setup_and_check.bat` をダブルクリックする（何度実行しても安全）
 
-### 0. 確認（読むだけ。何も入れない・変えない）
+バッチがすること：最新コードの取得（初回は `Documents\ai-pmo-assistant` に clone）→ ANTHROPIC_API_KEY が無いことの確認（あれば止まる）→
+Python の確認 → 準備（.venv と部品）→ テスト → `pmo check` → 試験用の議事録1件を `claude -p` で分析 →
+（.env に Notion の鍵があり `NOTION_DATABASE_KIND=test` の時だけ）試験用データベースの読み取り → BitLocker の状態 → 結果のまとめ → 画面の起動。
+進み具合は日本語で表示し、失敗したら「どこで止まったか」と「次の一手」を出す。記録は `logs\pc_check_日時.log`（鍵は書かない）。
+BitLocker は管理者権限が要るため、`scripts\check_bitlocker.bat` を右クリック→「管理者として実行」で別に確かめられる。
 
-```powershell
-(Get-CimInstance Win32_OperatingSystem).Caption
-[math]::Round((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory/1GB)
-py -0p; python --version
-git --version; claude --version
-Get-ChildItem Env: | Where-Object Name -like '*ANTHROPIC*' | Select-Object Name
-manage-bde -status C: | Select-String "保護状態|Protection Status"   # 管理者の PowerShell が要る。エラーなら飛ばしてよい
-```
+うまくいった時の見え方：手順ごとに緑の「→ 成功」が並び、最後に「結果のまとめ」が出て、ブラウザに画面（左に10個の画面の名前）が開く。
+Claude Code や Notion の設定が無い所は黄色の「→ 飛ばした」になる（失敗ではない）。
 
-`ANTHROPIC_API_KEY` が表示されたら、先に消してください（残っていると Claude Code が API 料金で動きます。
-このツールは見つけると Claude を呼ばずに止めます）。
+## 画面（spec 9章の10画面）
 
-### 1. 取得と設定
+| 画面 | できること |
+|---|---|
+| ダッシュボード | 期限超過・今日／近い期限・放置ぎみ・担当未定・未決事項（Python が数える。AI の推測は入らない） |
+| プロジェクト一覧 | プロジェクトごとの件数・最近の決定・直近の会議（進捗率は根拠が無いので出さない） |
+| 議事録 | 一覧と詳細（原文と抽出を並べ、出典に飛べる）、Claude Code で分析／手で貼る |
+| 抽出の確認（承認） | 候補の採用・却下。採用したものだけが確定データになり、変化は履歴に残る |
+| 課題・リスク管理／TODO 管理 | 確定した項目の一覧と、Excel で開ける CSV（課題管理表・リスク管理表・TODO 一覧） |
+| AI 分析結果 | 横断分析（再発・放置・食い違い・潜在リスク・次の行動・確認すべきこと）。根拠の項目番号が無い指摘は保存しない |
+| 資料作成 | 週次・月次・状況報告、アジェンダ、会議準備、議事録の清書、WBS 更新案、各種メールの下書き。ナレッジを参照し、引用の番号と割合の数字を点検 |
+| ナレッジ検索 | 議事録・項目・ナレッジ（資料作成知識・note）の横断検索。別プロジェクト固有のルールと古い資料に印 |
+| 処理の履歴・設定 | 処理の履歴、品質（採用率・不正率・見落とし・改善案）、設定の変更（理由が必須で履歴に残る） |
 
-```powershell
-cd $HOME\Documents
-git clone https://github.com/shotamiyazakihp-cell/ai-pmo-assistant.git
-cd ai-pmo-assistant
-py -3 -m venv .venv
-Set-ExecutionPolicy -Scope Process Bypass   # このウィンドウの間だけ
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt -e .
-python -m pytest -q        # すべて passed になること
-python -m pmo check        # ANTHROPIC_API_KEY が false であること
-```
+## 毎日の使い方
 
-### 2. 試験用の議事録で試す
+1. `Documents\ai-pmo-assistant` で `.\.venv\Scripts\Activate.ps1` → `streamlit run app/main.py`（または bat をもう一度ダブルクリック）
+2. 「議事録」→ 左の「Notion から取り込む」→ 会議日の古い順に「Claude Code で分析」→「抽出の確認」で採用・却下
+3. 「ダッシュボード」で今日やることを見る。必要に応じて「資料作成」「AI 分析結果」
+4. 自動実行（任意）：`powershell -ExecutionPolicy Bypass -File scripts\register_tasks.ps1`（毎時の更新確認と毎朝の日次レポート。Claude は使わない。解除は `-Remove`）
 
-```powershell
-python -m pmo ingest-samples                     # 10件を取り込む
-python -m pmo analyze --source sample-alpha-01   # 本物の Claude Code で1件だけ分析
-streamlit run app/main.py                        # 画面（ブラウザが開く）
-```
+## 実データの扱い（既定は止める）
 
-画面の「抽出の確認」で候補を見て、原文と合うものを採用・合わないものを却下します。
-全件を分析したら `python -m pmo evaluate` で、正解データとの一致率と、作り話の担当・期限の件数を出せます。
+設定「実データを扱う」が 0（既定）の間は、本物の議事録・ドライブの PMO ナレッジ・note の原稿を取り込まず、Claude にも渡さない。
+勤務先の規程を確かめた後、「処理の履歴・設定」で理由を書いて 1 にする。試験用のデータ（samples）はいつでも使える。
 
-Claude Code が動かない時は、画面の「手で貼る」を開き、指示文を Claude に貼って、返ってきた JSON を貼り戻します。
+## Notion につなぐ（オーナー本人の操作）
 
-### 3. Notion につなぐ（オーナー本人の操作）
+1. https://www.notion.so/profile/integrations で内部インテグレーションを作る。権限は「コンテンツを読み取る」だけ
+2. 試験用の議事録データベースの「…」→「接続」でそのインテグレーションを追加する
+3. `.env.example` を `.env` にコピーし、`NOTION_TOKEN`・`NOTION_DATABASE_ID`・`NOTION_DATABASE_KIND=test` を入れる（`.env` は Git に入らない）
 
-1. https://www.notion.so/profile/integrations で「内部インテグレーション」を作る。権限は **「コンテンツを読み取る」だけ**。
-2. 議事録のデータベース（例：HiDock記録）の「…」→「接続」でそのインテグレーションを追加する。
-3. `.env.example` を `.env` にコピーし、`NOTION_TOKEN` と `NOTION_DATABASE_ID` を入れる（`.env` は Git に入らない）。
-4. 画面の「Notion から取り込む」か `python -m pmo ingest-notion`。
+## データの置き場所と触らないもの
 
-実際の勤務先の議事録は、勤務先の規程で許されるまで使いません（試験用のページだけで確かめる）。
+- PC の `data\pmo.db`（SQLite：原文の版・抽出・確定データ・履歴・ナレッジ・下書き）、`data\reports`（日次レポート）、`logs`、`.env`。どれも Git に入らない
+- 触らないもの：Notion の原文（読むだけ。書き込みは送る前に止める）、KB アプリと Supabase の kb の区画（読まない・書かない）
 
-## 毎日の使い方（Phase 1）
+## コマンド
 
-1. PowerShell で `cd $HOME\Documents\ai-pmo-assistant` → `.\.venv\Scripts\Activate.ps1` → `streamlit run app/main.py`
-2. 左の「Notion から取り込む」（または試験用の議事録を取り込む）
-3. 「議事録」で**会議日の古い順に**1件ずつ「Claude Code で分析」→「抽出の確認」で採用・却下
-   （古い順に採用していくと、次の会議の分析で Claude が既存の項目を見て、状態や期限の変化を同じ項目に結び付けます）
-4. 「確定した項目」で、項目ごとの変化の履歴を見る。「処理の履歴」で失敗が無いか見る
-
-## データの置き場所
-
-- 取り込んだ原文・抽出・確定した項目・履歴：PC の `data\pmo.db`（SQLite。Git には入らない）
-- 鍵：PC の `.env`（Git には入らない）
-- 触らないもの：Notion の原文（読むだけ）、KB アプリと Supabase の kb の区画（読まない・書かない）
+`python -m pmo --help` を参照（check / ingest-samples / ingest-notion / analyze / evaluate / import-knowledge / import-note / search / daily / document / analyze-project / auto / quality）。
 
 ## 構成
 
-| 場所 | 中身 |
-|---|---|
-| `src/pmo/notion_reader.py` | Notion の読み取り専用クライアント（ページネーション、入れ子のブロック、429 の再試行、書き込みの禁止） |
-| `src/pmo/ingest.py` | 取り込み。ページ ID＋本文の指紋で重複を防ぎ、本文が変わったら新しい版。ゴミ箱・消えたページに印 |
-| `src/pmo/extract.py` | 指示文づくり、AI の返事の点検（引用が原文に無ければ不正、担当・期限の根拠が無ければ「不明」）、保存 |
-| `src/pmo/compare.py` | 既存の項目との照合（同じプロジェクト・同じ種類の中だけ） |
-| `src/pmo/review.py` | 採用・却下。採用したものだけが確定データに入り、状態・期限・担当の変化を履歴に残す |
-| `src/pmo/claude_runner.py` | `claude -p` の呼び出し。ANTHROPIC_API_KEY があれば止める。道具は使わせない |
-| `src/pmo/evaluate.py` | 完了の条件を数える |
-| `app/main.py` | 画面3つ（議事録の一覧と詳細／抽出の確認／処理の履歴） |
-| `samples/` | 試験用の議事録10件（架空の3プロジェクト・4週間分）と正解データ |
+`src/pmo/`：notion_reader（読み取り専用）・ingest（差分と重複）・extract（抽出と点検）・compare（照合）・review（採用）・
+knowledge（Phase 2）・practice（Phase 3）・automate（Phase 4）・quality（Phase 5）・settings_store（実データのスイッチと変更履歴）・
+claude_runner（`claude -p`、API キーがあれば止める）。`app/`：画面。`scripts/`：PC 用のバッチ。`samples/`：試験用の架空のデータと、Claude の盲検の結果。

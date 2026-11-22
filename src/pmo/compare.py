@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import sqlite3
 
+from . import settings_store
 from .textutil import similarity
 
 MATCH_THRESHOLD = 0.6
@@ -25,6 +26,6 @@ def find_match(conn: sqlite3.Connection, project: str, item_type: str, content: 
         score = similarity(row["content"], content)
         if score > best_score:
             best_id, best_score = row["item_id"], score
-    if best_id is not None and best_score >= MATCH_THRESHOLD:
+    if best_id is not None and best_score >= settings_store.get_float(conn, "match_threshold"):
         return best_id, f"文が近い（{best_score:.2f}）"
     return None, None

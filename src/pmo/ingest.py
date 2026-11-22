@@ -12,7 +12,7 @@ import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import db
+from . import db, settings_store
 from .config import ROOT, UNKNOWN
 from .notion_reader import NotionError, NotionReader, page_property_text, page_title
 from .textutil import content_hash
@@ -28,6 +28,7 @@ class SourceMeta:
     meeting_date: str | None = None
     last_edited_time: str | None = None
     archived: bool = False
+    data_kind: str = "test"   # test / real
 
 
 def upsert_source(conn: sqlite3.Connection, meta: SourceMeta, body: str,
@@ -38,10 +39,9 @@ def upsert_source(conn: sqlite3.Connection, meta: SourceMeta, body: str,
     if row is None:
         conn.execute(
             """INSERT INTO sources(source_id, origin, url, title, project, meeting_date,
-                   last_edited_time, archived, first_seen_at, last_seen_at)
-               VALUES (?,?,?,?,?,?,?,?,?,?)""",
+                   last_edited_time, archived, first_seen_at, last_seen_at, data_kind) VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
             (meta.source_id, meta.origin, meta.url, meta.title, meta.project or UNKNOWN,
-             meta.meeting_date, meta.last_edited_time, int(meta.archived), ts, ts),
+             meta.meeting_date, meta.last_edited_time, int(meta.archived), ts, ts, meta.data_kind),
         )
     else:
         conn.execute(
@@ -122,7 +122,7 @@ def ingest_files(conn: sqlite3.Connection, paths: list[Path]) -> dict:
 # ---------------- Notion ----------------
 
 def _meta_from_page(page: dict, reader: NotionReader, project_prop: str, date_prop: str,
-                    title_cache: dict[str, str]) -> SourceMeta:
+                    title_cache: dict[str, str], data_kind: str) -> SourceMeta:
     def resolve(pid: str) -> str:
         if pid not in title_cache:
             try:
@@ -141,11 +141,17 @@ def _meta_from_page(page: dict, reader: NotionReader, project_prop: str, date_pr
         meeting_date=date_val[:10] if date_val else None,
         last_edited_time=page.get("last_edited_time"),
         archived=bool(page.get("archived") or page.get("in_trash")),
+        data_kind=data_kind,
     )
 
 
 def ingest_notion(conn: sqlite3.Connection, reader: NotionReader, database_id: str,
-                  project_prop: str, date_prop: str, force: bool = False) -> dict:
+                  project_prop: str, date_prop: str, force: bool = False, data_kind: str = "real") -> dict:
+    """data_kind：試験用のデータベースなら "test"。"real"（本物の議事録）は設定で許可した時だけ取り込む。"""
+    if data_kind not in ("test", "real"):
+        raise ValueError("data_kind は test か real")
+    if data_kind == "real":
+        settings_store.require_real_data(conn, "本物の議事録の取り込み")
     run_id = db.start_run(conn, "ingest_notion")
     counts = {"listed": 0, "skipped_not_edited": 0, "new": 0, "new_version": 0,
               "unchanged": 0, "archived": 0, "missing_marked": 0, "unretrieved_blocks": 0}
@@ -161,7 +167,7 @@ def ingest_notion(conn: sqlite3.Connection, reader: NotionReader, database_id: s
             seen.add(pid)
             counts["listed"] += 1
             try:
-                meta = _meta_from_page(page, reader, project_prop, date_prop, title_cache)
+                meta = _meta_from_page(page, reader, project_prop, date_prop, title_cache, data_kind)
                 row = conn.execute(
                     "SELECT last_edited_time FROM sources WHERE source_id=?", (pid,)
                 ).fetchone()
