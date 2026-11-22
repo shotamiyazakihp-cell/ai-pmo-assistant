@@ -1,0 +1,8 @@
+{
+  "meeting": {"title": "社内ポータル移行 定例 第1回", "date": "2026-10-09", "participants": ["総務部 中村さん", "小林さん", "PMO"], "purpose": "不明"},
+  "items": [
+    {"item_type": "decision", "content": "移行するページは過去1年以内に更新されたものだけとする", "owner": "不明", "due": "不明", "status": "不明", "classification": "decision", "quote": "移行するページは、過去1年以内に更新されたものだけとすることを決定した。", "same_as_item_id": null},
+    {"item_type": "todo", "content": "旧ポータルのページ棚卸しを行う", "owner": "中村さん", "due": "10/23", "status": "不明", "classification": "fact", "quote": "中村さんが旧ポータルのページ棚卸しを10/23までに行う。", "same_as_item_id": null},
+    {"item_type": "risk", "content": "旧ポータルのサポートが12月で終了するため、移行が遅れると障害時に対応できなくなるおそれがある", "owner": "不明", "due": "不明", "status": "不明", "classification": "fact", "quote": "旧ポータルのサポートが12月で終了するため、移行が遅れると障害時に対応できなくなるおそれがある。", "same_as_item_id": null}
+  ]
+}

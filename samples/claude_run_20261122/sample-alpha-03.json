@@ -1,0 +1,10 @@
+{
+  "meeting": {"title": "販売管理刷新 定例 第3回", "date": "2026-10-19", "participants": ["佐藤さん", "鈴木さん", "山本さん", "PMO"], "purpose": "不明"},
+  "items": [
+    {"item_type": "decision", "content": "要件定義の完了を10月末から11月中旬に延期する（帳票の確認に時間がかかっているため）", "owner": "不明", "due": "11月中旬", "status": "延期", "classification": "decision", "quote": "要件定義の完了を10月末から11月中旬に延期することを決定した。理由は帳票の確認に時間がかかっているため。", "same_as_item_id": null},
+    {"item_type": "todo", "content": "画面一覧の作成（途中で遅れている）", "owner": "鈴木さん", "due": "不明", "status": "対応中", "classification": "fact", "quote": "鈴木さんの画面一覧はまだ途中で、遅れている。", "same_as_item_id": null},
+    {"item_type": "issue", "content": "現行システムの仕様書が古い問題は未解消。現場へのヒアリングで補っている", "owner": "不明", "due": "不明", "status": "対応中", "classification": "fact", "quote": "現行システムの仕様書が古い問題は解消していない。仕様は現場へのヒアリングで補っている。", "same_as_item_id": null},
+    {"item_type": "open_question", "content": "帳票の出力形式をPDFにするかExcelにするか", "owner": "不明", "due": "不明", "status": "未決", "classification": "fact", "quote": "帳票の出力形式をPDFにするかExcelにするかは未決。", "same_as_item_id": null},
+    {"item_type": "todo", "content": "帳票の出力形式について利用部門の希望を聞く", "owner": "不明", "due": "次回まで", "status": "不明", "classification": "fact", "quote": "次回までに利用部門の希望を聞く。", "same_as_item_id": null}
+  ]
+}

@@ -10,7 +10,7 @@ import sqlite3
 from pathlib import Path
 
 from .config import ROOT, UNKNOWN
-from .textutil import similarity
+from .textutil import contains, similarity
 
 GOLD_DIR = ROOT / "samples" / "gold"
 MATCH = 0.6
@@ -49,13 +49,18 @@ def evaluate(conn: sqlite3.Connection, gold_dir: Path = GOLD_DIR) -> dict:
     ).fetchall()
     report["duplicate_versions"] = len(dup)
 
-    gold_total = matched_total = extra_total = fabricated = invalid_total = 0
+    gold_total = matched_total = extra_total = fabricated = differs = invalid_total = 0
     for sid, items in gold.items():
         v = conn.execute("SELECT MAX(version_id) v FROM source_versions WHERE source_id=?", (sid,)).fetchone()["v"]
         ex = [dict(r) for r in conn.execute(
             "SELECT * FROM extractions WHERE version_id=?", (v,))] if v else []
         invalid_total += sum(1 for e in ex if e["review_status"] == "invalid")
         usable = [e for e in ex if e["review_status"] != "invalid"]
+        for e in usable:
+            for k in ("owner", "due"):
+                # 作り話：担当・期限が入っているのに、引用の中に書かれていない
+                if e[k] != UNKNOWN and not contains(e["quote"], e[k]):
+                    fabricated += 1
         used: set[int] = set()
         matched = 0
         for g in items:
@@ -70,9 +75,9 @@ def evaluate(conn: sqlite3.Connection, gold_dir: Path = GOLD_DIR) -> dict:
                 used.add(best["extraction_id"])
                 matched += 1
                 for k in ("owner", "due"):
-                    # 正解が「不明」なのに値が入っていれば作り話として数える
-                    if g[k] == UNKNOWN and best[k] != UNKNOWN:
-                        fabricated += 1
+                    # 正解データとの違い（引用に根拠があれば作り話ではない。人が見て判断する）
+                    if g[k] != best[k]:
+                        differs += 1
         extra = len(usable) - len(used)
         report["per_source"][sid] = {"gold": len(items), "matched": matched, "extra": extra}
         gold_total += len(items)
@@ -85,5 +90,6 @@ def evaluate(conn: sqlite3.Connection, gold_dir: Path = GOLD_DIR) -> dict:
         "extra_items": extra_total,
         "invalid_items": invalid_total,
         "fabricated_owner_or_due": fabricated,
+        "owner_or_due_differs_from_gold": differs,
     })
     return report

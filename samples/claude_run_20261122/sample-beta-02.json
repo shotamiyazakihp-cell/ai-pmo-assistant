@@ -1,0 +1,8 @@
+{
+  "meeting": {"title": "経費精算クラウド導入 定例 第1回", "date": "2026-10-14", "participants": ["高橋さん", "伊藤さん", "PMO"], "purpose": "不明"},
+  "items": [
+    {"item_type": "todo", "content": "承認フローの整理", "owner": "高橋さん", "due": "不明", "status": "対応中", "classification": "fact", "quote": "承認フローの整理は高橋さんが対応中。", "same_as_item_id": null},
+    {"item_type": "issue", "content": "本稼働の時期について、経理部は12月、情報システム部は1月と考えており認識が合っていない", "owner": "不明", "due": "不明", "status": "不明", "classification": "fact", "quote": "本稼働の時期について、経理部は12月と考えているが、情報システム部は1月と考えており、認識が合っていない。", "same_as_item_id": null},
+    {"item_type": "todo", "content": "本稼働の時期を経理部長に確認する", "owner": "伊藤さん", "due": "10/16", "status": "不明", "classification": "fact", "quote": "伊藤さんが本稼働の時期を経理部長に確認する。期限は10/16。", "same_as_item_id": null}
+  ]
+}

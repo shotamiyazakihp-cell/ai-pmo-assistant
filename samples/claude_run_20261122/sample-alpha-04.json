@@ -1,0 +1,9 @@
+{
+  "meeting": {"title": "販売管理刷新 定例 第4回", "date": "2026-10-26", "participants": ["田中部長", "佐藤さん", "鈴木さん", "山本さん", "PMO"], "purpose": "不明"},
+  "items": [
+    {"item_type": "issue", "content": "田中部長の兼務が始まり、要件定義書のレビューがまだ行われていない", "owner": "不明", "due": "不明", "status": "未着手", "classification": "fact", "quote": "田中部長の兼務が始まり、要件定義書のレビューがまだ行われていない。", "same_as_item_id": null},
+    {"item_type": "todo", "content": "データ移行方針を整理する", "owner": "山本さん", "due": "11/6", "status": "不明", "classification": "fact", "quote": "山本さんがデータ移行方針を11/6までに整理する。", "same_as_item_id": null},
+    {"item_type": "todo", "content": "画面一覧の作成（完了）", "owner": "鈴木さん", "due": "不明", "status": "完了", "classification": "fact", "quote": "鈴木さんの画面一覧は完了した。", "same_as_item_id": null},
+    {"item_type": "decision", "content": "帳票の出力形式はPDFとする", "owner": "不明", "due": "不明", "status": "不明", "classification": "decision", "quote": "帳票の出力形式はPDFとすることを決定した。", "same_as_item_id": null}
+  ]
+}

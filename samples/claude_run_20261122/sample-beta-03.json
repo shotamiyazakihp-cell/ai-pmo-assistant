@@ -1,0 +1,9 @@
+{
+  "meeting": {"title": "経費精算クラウド導入 定例 第2回", "date": "2026-10-28", "participants": ["高橋さん", "伊藤さん", "PMO"], "purpose": "不明"},
+  "items": [
+    {"item_type": "decision", "content": "経理部長に確認した結果、本稼働は1月とする", "owner": "不明", "due": "1月", "status": "不明", "classification": "decision", "quote": "経理部長に確認した結果、本稼働は1月とすることを決定した。", "same_as_item_id": null},
+    {"item_type": "todo", "content": "承認フローの整理（完了）", "owner": "不明", "due": "不明", "status": "完了", "classification": "fact", "quote": "承認フローの整理は完了した。", "same_as_item_id": null},
+    {"item_type": "open_question", "content": "交通費の精算をラクケイで扱うかどうか", "owner": "不明", "due": "不明", "status": "未決", "classification": "fact", "quote": "交通費の精算をラクケイで扱うかどうかは、引き続き未決。", "same_as_item_id": null},
+    {"item_type": "risk", "content": "1月の本稼働は年度末の繁忙期に近く、利用者への説明が十分にできないおそれがある", "owner": "不明", "due": "不明", "status": "不明", "classification": "fact", "quote": "1月の本稼働は年度末の繁忙期に近く、利用者への説明が十分にできないおそれがある。", "same_as_item_id": null}
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "meeting": {"title": "販売管理刷新 定例 第2回", "date": "2026-10-12", "participants": ["田中部長", "佐藤さん", "鈴木さん", "PMO"], "purpose": "不明"},
+  "items": [
+    {"item_type": "todo", "content": "現行帳票の一覧を作成する（完了。帳票は全部で52種類）", "owner": "佐藤さん", "due": "不明", "status": "完了", "classification": "fact", "quote": "現行帳票の一覧は佐藤さんが作成し、完了した。帳票は全部で52種類あった。", "same_as_item_id": null},
+    {"item_type": "open_question", "content": "データ移行方針の整理の担当が未定", "owner": "不明", "due": "不明", "status": "未決", "classification": "fact", "quote": "データ移行方針の整理は、まだ担当が決まっていない。", "same_as_item_id": null},
+    {"item_type": "decision", "content": "新システムで作る帳票は30種類に絞る", "owner": "不明", "due": "不明", "status": "不明", "classification": "decision", "quote": "新システムで作る帳票は30種類に絞ることを決定した。", "same_as_item_id": null},
+    {"item_type": "todo", "content": "新システムの画面一覧をまとめる", "owner": "鈴木さん", "due": "来週中", "status": "不明", "classification": "fact", "quote": "鈴木さんが新システムの画面一覧を来週中にまとめる。", "same_as_item_id": null},
+    {"item_type": "issue", "content": "帳票を絞るなら利用部門への説明会が必要（佐藤さんの意見）", "owner": "不明", "due": "不明", "status": "不明", "classification": "opinion", "quote": "佐藤さんの意見：帳票を絞るなら、利用部門への説明会が必要だと思う。", "same_as_item_id": null}
+  ]
+}
