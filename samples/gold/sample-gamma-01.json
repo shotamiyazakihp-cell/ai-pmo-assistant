@@ -1,0 +1,37 @@
+{
+  "meeting": {
+    "title": "sample-gamma-01"
+  },
+  "items": [
+    {
+      "item_type": "decision",
+      "content": "移行するページは過去1年以内に更新されたものだけとする",
+      "owner": "不明",
+      "due": "不明",
+      "status": "決定",
+      "classification": "decision",
+      "quote": "移行するページは、過去1年以内に更新されたものだけとすることを決定した。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "todo",
+      "content": "旧ポータルのページ棚卸しを行う",
+      "owner": "中村",
+      "due": "10/23",
+      "status": "未着手",
+      "classification": "fact",
+      "quote": "中村さんが旧ポータルのページ棚卸しを10/23までに行う。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "risk",
+      "content": "旧ポータルのサポート終了（12月）で移行が遅れると障害時に対応できない",
+      "owner": "不明",
+      "due": "不明",
+      "status": "不明",
+      "classification": "fact",
+      "quote": "旧ポータルのサポートが12月で終了するため、移行が遅れると障害時に対応できなくなるおそれがある。",
+      "same_as_item_id": null
+    }
+  ]
+}

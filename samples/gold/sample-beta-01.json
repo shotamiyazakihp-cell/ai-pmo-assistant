@@ -1,0 +1,47 @@
+{
+  "meeting": {
+    "title": "sample-beta-01"
+  },
+  "items": [
+    {
+      "item_type": "decision",
+      "content": "製品はクラウドサービス「ラクケイ」を採用する",
+      "owner": "不明",
+      "due": "不明",
+      "status": "決定",
+      "classification": "decision",
+      "quote": "製品はクラウドサービス「ラクケイ」を採用することを決定した。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "todo",
+      "content": "承認フローの現状を整理する",
+      "owner": "高橋",
+      "due": "10/21",
+      "status": "未着手",
+      "classification": "fact",
+      "quote": "高橋さんが承認フローの現状を10/21までに整理する。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "todo",
+      "content": "月末の締め処理に間に合うように導入する（経理部の依頼）",
+      "owner": "不明",
+      "due": "不明",
+      "status": "不明",
+      "classification": "fact",
+      "quote": "経理部からの依頼：月末の締め処理に間に合うように導入してほしい。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "open_question",
+      "content": "交通費の精算をラクケイで扱うかどうか",
+      "owner": "不明",
+      "due": "不明",
+      "status": "未決",
+      "classification": "fact",
+      "quote": "交通費の精算をラクケイで扱うかどうかは未決。",
+      "same_as_item_id": null
+    }
+  ]
+}

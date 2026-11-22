@@ -1,0 +1,37 @@
+{
+  "meeting": {
+    "title": "sample-gamma-03"
+  },
+  "items": [
+    {
+      "item_type": "todo",
+      "content": "旧ポータルのページ棚卸しを行う",
+      "owner": "不明",
+      "due": "不明",
+      "status": "完了",
+      "classification": "fact",
+      "quote": "ページ棚卸しは完了した。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "issue",
+      "content": "添付ファイルの合計容量が新ポータルの上限を超えそう",
+      "owner": "不明",
+      "due": "不明",
+      "status": "未解決",
+      "classification": "fact",
+      "quote": "添付ファイルの容量が上限を超える問題は、まだ解決していない。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "decision",
+      "content": "新ポータルへの切替日は12/1とする",
+      "owner": "不明",
+      "due": "不明",
+      "status": "決定",
+      "classification": "decision",
+      "quote": "新ポータルへの切替日は12/1とすることを決定した。",
+      "same_as_item_id": null
+    }
+  ]
+}

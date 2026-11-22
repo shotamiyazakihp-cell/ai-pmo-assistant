@@ -1,0 +1,37 @@
+{
+  "meeting": {
+    "title": "sample-beta-02"
+  },
+  "items": [
+    {
+      "item_type": "todo",
+      "content": "承認フローの現状を整理する",
+      "owner": "高橋",
+      "due": "不明",
+      "status": "対応中",
+      "classification": "fact",
+      "quote": "承認フローの整理は高橋さんが対応中。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "issue",
+      "content": "本稼働の時期の認識が経理部（12月）と情報システム部（1月）で合っていない",
+      "owner": "不明",
+      "due": "不明",
+      "status": "不明",
+      "classification": "fact",
+      "quote": "本稼働の時期について、経理部は12月と考えているが、情報システム部は1月と考えており、認識が合っていない。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "todo",
+      "content": "本稼働の時期を経理部長に確認する",
+      "owner": "伊藤",
+      "due": "10/16",
+      "status": "未着手",
+      "classification": "fact",
+      "quote": "伊藤さんが本稼働の時期を経理部長に確認する。期限は10/16。",
+      "same_as_item_id": null
+    }
+  ]
+}

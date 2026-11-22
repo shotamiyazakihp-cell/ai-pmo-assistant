@@ -1,0 +1,57 @@
+{
+  "meeting": {
+    "title": "sample-alpha-02"
+  },
+  "items": [
+    {
+      "item_type": "todo",
+      "content": "現行帳票の一覧を作成する",
+      "owner": "佐藤",
+      "due": "不明",
+      "status": "完了",
+      "classification": "fact",
+      "quote": "現行帳票の一覧は佐藤さんが作成し、完了した。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "todo",
+      "content": "データ移行方針を整理する",
+      "owner": "不明",
+      "due": "不明",
+      "status": "担当未定",
+      "classification": "fact",
+      "quote": "データ移行方針の整理は、まだ担当が決まっていない。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "decision",
+      "content": "新システムの帳票は30種類に絞る",
+      "owner": "不明",
+      "due": "不明",
+      "status": "決定",
+      "classification": "decision",
+      "quote": "新システムで作る帳票は30種類に絞ることを決定した。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "todo",
+      "content": "新システムの画面一覧をまとめる",
+      "owner": "鈴木",
+      "due": "来週中",
+      "status": "未着手",
+      "classification": "fact",
+      "quote": "鈴木さんが新システムの画面一覧を来週中にまとめる。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "issue",
+      "content": "帳票を絞るなら利用部門への説明会が必要",
+      "owner": "不明",
+      "due": "不明",
+      "status": "不明",
+      "classification": "opinion",
+      "quote": "佐藤さんの意見：帳票を絞るなら、利用部門への説明会が必要だと思う。",
+      "same_as_item_id": null
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "meeting": {
+    "title": "sample-alpha-04"
+  },
+  "items": [
+    {
+      "item_type": "issue",
+      "content": "田中部長の兼務で要件定義書のレビューが行われていない",
+      "owner": "不明",
+      "due": "不明",
+      "status": "未対応",
+      "classification": "fact",
+      "quote": "田中部長の兼務が始まり、要件定義書のレビューがまだ行われていない。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "todo",
+      "content": "データ移行方針を整理する",
+      "owner": "山本",
+      "due": "11/6",
+      "status": "未着手",
+      "classification": "fact",
+      "quote": "山本さんがデータ移行方針を11/6までに整理する。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "todo",
+      "content": "新システムの画面一覧をまとめる",
+      "owner": "鈴木",
+      "due": "不明",
+      "status": "完了",
+      "classification": "fact",
+      "quote": "鈴木さんの画面一覧は完了した。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "decision",
+      "content": "帳票の出力形式はPDFとする",
+      "owner": "不明",
+      "due": "不明",
+      "status": "決定",
+      "classification": "decision",
+      "quote": "帳票の出力形式はPDFとすることを決定した。",
+      "same_as_item_id": null
+    }
+  ]
+}

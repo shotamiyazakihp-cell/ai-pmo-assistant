@@ -1,0 +1,47 @@
+{
+  "meeting": {
+    "title": "sample-alpha-03"
+  },
+  "items": [
+    {
+      "item_type": "decision",
+      "content": "要件定義の完了を11月中旬に延期する",
+      "owner": "不明",
+      "due": "不明",
+      "status": "決定",
+      "classification": "decision",
+      "quote": "要件定義の完了を10月末から11月中旬に延期することを決定した。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "todo",
+      "content": "新システムの画面一覧をまとめる",
+      "owner": "鈴木",
+      "due": "不明",
+      "status": "遅れ",
+      "classification": "fact",
+      "quote": "鈴木さんの画面一覧はまだ途中で、遅れている。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "issue",
+      "content": "現行システムの仕様書が古い",
+      "owner": "不明",
+      "due": "不明",
+      "status": "未解決",
+      "classification": "fact",
+      "quote": "現行システムの仕様書が古い問題は解消していない。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "open_question",
+      "content": "帳票の出力形式をPDFにするかExcelにするか",
+      "owner": "不明",
+      "due": "不明",
+      "status": "未決",
+      "classification": "fact",
+      "quote": "帳票の出力形式をPDFにするかExcelにするかは未決。",
+      "same_as_item_id": null
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "meeting": {
+    "title": "sample-beta-03"
+  },
+  "items": [
+    {
+      "item_type": "decision",
+      "content": "本稼働は1月とする",
+      "owner": "不明",
+      "due": "不明",
+      "status": "決定",
+      "classification": "decision",
+      "quote": "経理部長に確認した結果、本稼働は1月とすることを決定した。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "todo",
+      "content": "承認フローの現状を整理する",
+      "owner": "不明",
+      "due": "不明",
+      "status": "完了",
+      "classification": "fact",
+      "quote": "承認フローの整理は完了した。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "open_question",
+      "content": "交通費の精算をラクケイで扱うかどうか",
+      "owner": "不明",
+      "due": "不明",
+      "status": "未決",
+      "classification": "fact",
+      "quote": "交通費の精算をラクケイで扱うかどうかは、引き続き未決。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "risk",
+      "content": "1月の本稼働は繁忙期に近く利用者への説明が不十分になる",
+      "owner": "不明",
+      "due": "不明",
+      "status": "不明",
+      "classification": "fact",
+      "quote": "1月の本稼働は年度末の繁忙期に近く、利用者への説明が十分にできないおそれがある。",
+      "same_as_item_id": null
+    }
+  ]
+}

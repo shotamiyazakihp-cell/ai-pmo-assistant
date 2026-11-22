@@ -1,0 +1,57 @@
+{
+  "meeting": {
+    "title": "sample-alpha-01"
+  },
+  "items": [
+    {
+      "item_type": "decision",
+      "content": "要件定義は10月末までに完了とする",
+      "owner": "不明",
+      "due": "不明",
+      "status": "合意",
+      "classification": "decision",
+      "quote": "要件定義は10月末までに完了とすることで合意した。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "issue",
+      "content": "現行システムの仕様書が古い",
+      "owner": "不明",
+      "due": "不明",
+      "status": "不明",
+      "classification": "fact",
+      "quote": "現行システムの仕様書が古く、実際の動きと合っていない箇所が多い。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "todo",
+      "content": "現行帳票の一覧を作成する",
+      "owner": "佐藤",
+      "due": "10/9",
+      "status": "未着手",
+      "classification": "fact",
+      "quote": "佐藤さんが現行帳票の一覧を10/9までに作成する。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "todo",
+      "content": "データ移行方針を整理する",
+      "owner": "不明",
+      "due": "不明",
+      "status": "担当未定",
+      "classification": "fact",
+      "quote": "データ移行方針を誰かが整理する必要がある。担当は決まらなかった。",
+      "same_as_item_id": null
+    },
+    {
+      "item_type": "risk",
+      "content": "田中部長の兼務によりレビューが遅れる",
+      "owner": "不明",
+      "due": "不明",
+      "status": "不明",
+      "classification": "fact",
+      "quote": "田中部長が11月から別案件と兼務になるため、レビューが遅れるおそれがある。",
+      "same_as_item_id": null
+    }
+  ]
+}
